@@ -20,8 +20,9 @@ type (
 		parseTypes []JSType
 	}
 
-	attrPrefixer    string
-	contentPrefixer string
+	attrPrefixer     string
+	contentPrefixer  string
+	labelTransformer func(string) string
 
 	excluder []string
 
@@ -109,6 +110,22 @@ func (c *contentPrefixer) AddToEncoder(e *Encoder) *Encoder {
 
 func (c *contentPrefixer) AddToDecoder(d *Decoder) *Decoder {
 	d.contentPrefix = string((*c))
+	return d
+}
+
+// WithLabelTransformer
+func WithLabelTransformer(transformer func(string) string) *labelTransformer {
+	t := labelTransformer(transformer)
+	return &t
+}
+
+func (t *labelTransformer) AddToEncoder(e *Encoder) *Encoder {
+	e.labelTransformer = *t
+	return e
+}
+
+func (t *labelTransformer) AddToDecoder(d *Decoder) *Decoder {
+	d.labelTransformer = *t
 	return d
 }
 

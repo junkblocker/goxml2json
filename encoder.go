@@ -8,11 +8,12 @@ import (
 
 // An Encoder writes JSON objects to an output stream.
 type Encoder struct {
-	w               io.Writer
-	err             error
-	contentPrefix   string
-	attributePrefix string
-	tc              encoderTypeConverter
+	w                io.Writer
+	err              error
+	contentPrefix    string
+	attributePrefix  string
+	tc               encoderTypeConverter
+	labelTransformer func(string) string
 }
 
 // NewEncoder returns a new encoder that writes to w.
@@ -64,6 +65,11 @@ func (enc *Encoder) format(n *Node, lvl int) error {
 		tot := len(n.Children)
 		for label, children := range n.Children {
 			enc.write("\"")
+
+			if enc.labelTransformer != nil {
+				label = enc.labelTransformer(label)
+			}
+
 			enc.write(label)
 			enc.write("\": ")
 

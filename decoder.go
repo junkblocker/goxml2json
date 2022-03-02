@@ -15,12 +15,13 @@ const (
 
 // A Decoder reads and decodes XML objects from an input stream.
 type Decoder struct {
-	r               io.Reader
-	err             error
-	attributePrefix string
-	contentPrefix   string
-	excludeAttrs    map[string]bool
-	formatters      []nodeFormatter
+	r                io.Reader
+	err              error
+	attributePrefix  string
+	contentPrefix    string
+	labelTransformer func(string) string
+	excludeAttrs     map[string]bool
+	formatters       []nodeFormatter
 }
 
 type element struct {
